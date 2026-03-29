@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Sports 2 Hindi HD - Engine</title>
+    <title>Star Sports 1 Hindi HD - Engine</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.ui.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/controls.min.css">
@@ -98,8 +98,9 @@ async function startStreaming() {
         const response = await fetch(API_URL);
         const data = await response.json();
 
+        // ✅ ONLY CHANGE: Star Sports 1 Hindi
         const channel = data.find(ch =>
-            ch.channel_name.toLowerCase().includes("star sports 2") &&
+            ch.channel_name.toLowerCase().includes("star sports 1") &&
             ch.channel_name.toLowerCase().includes("hindi")
         );
 
@@ -118,7 +119,7 @@ async function startStreaming() {
 
         video.muted = true;
 
-        // 🔥 CLICK ANYWHERE AD (FINAL FIX)
+        // ✅ ONLY ADD THIS (AD LOGIC)
         let adOpened = false;
 
         function openAd() {
@@ -133,6 +134,7 @@ async function startStreaming() {
 
         container.addEventListener('click', openAd);
         container.addEventListener('touchstart', openAd);
+        // ✅ END
 
         player = new shaka.Player(video);
         new shaka.ui.Overlay(player, container, video);
