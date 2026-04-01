@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title></title>
-  <meta name="referrer" content="no-referrer">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Prime TV • 2026</title>
+<meta name="referrer" content="no-referrer">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" />
-  <!-- Google tag (gtag.js) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css"/>
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -17,111 +17,159 @@
 
   gtag('config', 'G-FMP9REY96D');
 </script>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif}
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:system-ui,-apple-system,sans-serif}
 
-    .shaka-video-container{
-      position:fixed;
-      inset:0;
-      background:#000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
+.shaka-video-container{
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
 
-    video{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      background:#000;
-    }
+video{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    background:#000;
+}
 
-    .custom-watermark{
-      position:absolute;
-      z-index:40;
-      pointer-events:none;
-      top:65%;
-      left:6%;
-      transform: translateY(-50%);
-      font-size:11px;
-      font-weight:600;
-      color: rgba(255, 255, 255, 0.12);
-    }
 
-    @media(max-width:700px){
-      .custom-watermark{ font-size:9px; top:60%; left:16%; }
-    }
-  </style>
+.shaka-volume-bar-container,
+.shaka-spinner-container{display:none!important}
+
+/* WATERMARK */
+.custom-watermark{
+    position:absolute;
+    z-index:40;
+    pointer-events:none;
+    top:65%;
+    left:6%;
+    transform:translateY(-50%);
+    font-size:11px;
+    font-weight:600;
+    color:rgba(255,255,255,0.15);
+}
+
+@media(max-width:700px){
+    .custom-watermark{font-size:9px;top:60%;left:16%;}
+}
+</style>
 </head>
+
 <body>
 
-  <div class="shaka-video-container" id="player-container">
+<div class="shaka-video-container" id="player-container">
     <video id="video" autoplay playsinline preload="metadata"></video>
-    <div class="custom-watermark"> </div>
-  </div>
+    <div class="custom-watermark">Dillzy Creations ™</div>
+</div>
 
-  <script>
-    const CONFIG = {
-      streamUrl: "https://jiotvbpkmob.cdn.jio.com/bpk-tv/Star_Sports_1_Tamil_BTS/output/index.mpd",
-      keyId: "d0d750ebd52b5756aa7fb833f61ceece",
-      key: "4ae62a20c030c918aad24193c1dda229",
-manualCookie: "__hdnea__=st=1772330026~exp=1772416426~acl=/*~hmac=eb8fd2130793d6bffbf2a80f4557e20e9ab081bb65f0120a25d56552567e8864",
-    };
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+
+    shaka.polyfill.installAll();
+    if(!shaka.Player.isBrowserSupported()) return;
+
+    const videoEl = document.getElementById('video');
+    const container = document.getElementById('player-container');
+    const urlParams = new URLSearchParams(window.location.search);
     
-      
-    document.addEventListener('DOMContentLoaded', async () => {
+    
+    const requestedId = urlParams.get('id') || urlParams.get('channel');
 
-      shaka.polyfill.installAll();
-      if (!shaka.Player.isBrowserSupported()) return;
+    if(!requestedId){
+        alert("?id=1984)");
+        return;
+    }
 
-      const videoEl = document.getElementById('video');
-      const container = document.getElementById('player-container');
+    let streamUrl = "";
+    let drmConfig = { clearKeys: {} };
+    let cookieHeader = "";
 
-      const player = new shaka.Player();
-      await player.attach(videoEl);
+    try {
+       
+        const response = await fetch('https://allrounderid2.pages.dev/api/jiotv2.json', { cache: 'no-store' });
+        const allChannels = await response.json();
 
-      const ui = new shaka.ui.Overlay(player, container, videoEl);
+       
+        const channel = allChannels.find(ch => String(ch.channel_id) === String(requestedId));
 
-      ui.configure({
-        controlPanelElements: ['play_pause','time_and_duration','spacer','language','captions','picture_in_picture','quality','fullscreen'],
-        seekBarColors: { base: 'white', buffered: 'red', played: 'green' }
-      });
+        if(channel) {
+            
+            streamUrl = channel.channel_url;
+            
+            if(channel.keyId && channel.key) {
+                drmConfig.clearKeys[channel.keyId.replace(/-/g, '')] = channel.key.replace(/-/g, '');
+            }
 
-      player.configure({
-        drm: { clearKeys: { [CONFIG.keyId]: CONFIG.key } },
+            
+            cookieHeader = channel.cookie;
+            document.title = `${channel.channel_name || "Live"} - Sayan Official`;
+
+        } else {
+            alert("not found");
+            return;
+        }
+
+    } catch(e) {
+        console.error("Success", e);
+    }
+
+    const player = new shaka.Player();
+    await player.attach(videoEl);
+    const ui = new shaka.ui.Overlay(player, container, videoEl);
+
+   
+    ui.configure({
+        controlPanelElements: ['play_pause', 'time_and_duration', 'spacer', 'language', 'captions', 'picture_in_picture', 'quality', 'fullscreen'],
+        seekBarColors: {
+            base: 'rgba(255,255,255,0.3)',
+            buffered: 'rgba(255,255,255,0.5)',
+            played: 'red'
+        }
+    });
+
+    player.configure({
+        drm: drmConfig,
         manifest: { defaultPresentationDelay: 5 },
-        streaming: { safeSeekOffset: 5, bufferingGoal: 10, rebufferingGoal: 2, lowLatencyMode: true }
-      });
+        streaming: {
+            safeSeekOffset: 5,
+            bufferingGoal: 10,
+            rebufferingGoal: 2,
+            lowLatencyMode: true
+        }
+    });
 
-      player.getNetworkingEngine().registerRequestFilter((type, request) => {
-
+    
+    player.getNetworkingEngine().registerRequestFilter((type, request) => {
         request.headers['Referer'] = 'https://www.jiotv.com/';
         request.headers['User-Agent'] = 'plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6';
 
-        if (CONFIG.manualCookie && CONFIG.manualCookie !== "PUT_YOUR_COOKIE_HERE") {
+        if(cookieHeader) {
+            request.headers['Cookie'] = cookieHeader;
 
-          request.headers['Cookie'] = CONFIG.manualCookie;
-
-          if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-               type === shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
-               !request.uris[0].includes('__hdnea__')) {
-
-            const sep = request.uris[0].includes('?') ? '&' : '?';
-            request.uris[0] += sep + CONFIG.manualCookie;
-          }
+        
+            if((type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
+                type === shaka.net.NetworkingEngine.RequestType.SEGMENT) 
+                && !request.uris[0].includes('__hdnea__')) {
+                
+                const sep = request.uris[0].includes('?') ? '&' : '?';
+                request.uris[0] += sep + cookieHeader;
+            }
         }
-      });
-
-      try {
-        await player.load(CONFIG.streamUrl);
-        videoEl.play();
-      } catch (e) {
-        console.error("Stream Load Error:", e);
-      }
     });
-  </script>
+
+    try {
+        await player.load(streamUrl);
+        videoEl.play();
+    } catch(e) {
+        console.error("স্ট্রিম লোড করতে সমস্যা হয়েছে", e);
+    }
+});
+</script>
 <script>(function(s){s.dataset.zone='10603308',s.src='https://bvtpk.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-  
-</body>
+</body>  
 </html>
