@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const video = document.getElementById("video");
   const container = document.getElementById("player-container");
 
+  // ✅ FIXED PLAYER INIT
   const player = new shaka.Player(video);
 
   const ui = new shaka.ui.Overlay(player, container, video);
@@ -60,35 +61,46 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   const CONFIG = {
-    streamUrl: "https://jiotvmblive.cdn.jio.com//bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd",
+    streamUrl: "https://jiotvpllive.cdn.jio.com//bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd",
     keyId: "400131994b445d8c8817202248760fda",
-    key: "2d56cb6f07a75b9aff165d534ae2bfc4"
+    key: "2d56cb6f07a75b9aff165d534ae2bfc4",
+    cookieUrl: "https://allrounder-live3.pages.dev/api/cookie.json"
   };
-
-  // ✅ YOUR UPDATED COOKIE (DIRECT)
-  const cookieValue = "__hdnea__=st=1775131200~exp=1775152800~acl=/*~hmac=2dae0b4f0f0644367ed24ab627e46c0037f02e5e5dedea781eae13781e453bec";
 
   player.configure({
     drm: { clearKeys: { [CONFIG.keyId]: CONFIG.key } }
   });
 
-  // ✅ IMPORTANT NETWORK FILTER
-  player.getNetworkingEngine().registerRequestFilter((type, request) => {
+  let cookieValue = "";
 
-    request.headers["Referer"] = "https://www.jiotv.com/";
-    request.headers["User-Agent"] = "plaYtv/7.1.5";
-    request.headers["Cookie"] = cookieValue;
+  try {
+    const res = await fetch(CONFIG.cookieUrl, { cache: "no-store" });
+    const data = await res.json();
+    cookieValue = data.cookie || "";
+  } catch (e) {
+    console.log("Cookie fetch failed");
+  }
 
-    let urlCookie = cookieValue.replace("__hdnea__=", "");
+  if (cookieValue) {
+    player.getNetworkingEngine().registerRequestFilter((type, request) => {
 
-    if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-         type === shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
-         !request.uris[0].includes("__hdnea__")) {
+      request.headers["Referer"] = "https://www.jiotv.com/";
+      request.headers["User-Agent"] = "plaYtv/7.1.5";
+      request.headers["Cookie"] = cookieValue;
 
-      const sep = request.uris[0].includes("?") ? "&" : "?";
-      request.uris[0] += sep + "__hdnea__=" + urlCookie;
-    }
-  });
+      let urlCookie = cookieValue.startsWith("__hdnea__=")
+        ? cookieValue.substring(10)
+        : cookieValue;
+
+      if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
+           type === shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
+           !request.uris[0].includes("__hdnea__")) {
+
+        const sep = request.uris[0].includes("?") ? "&" : "?";
+        request.uris[0] += sep + "__hdnea__=" + urlCookie;
+      }
+    });
+  }
 
   try {
     await player.load(CONFIG.streamUrl);
