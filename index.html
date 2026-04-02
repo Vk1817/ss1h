@@ -3,14 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Star Sports 1 hindi HD</title>
 
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;background:#000;overflow:hidden}
+html,body{width:100%;height:100%;background:#000}
 
 .shaka-video-container{
 position:fixed;
@@ -18,7 +17,6 @@ inset:0;
 display:flex;
 align-items:center;
 justify-content:center;
-background:#000;
 }
 
 video{
@@ -37,11 +35,11 @@ background:#000;
 </div>
 
 <script>
-(async function(){
+document.addEventListener("DOMContentLoaded", async () => {
 
   shaka.polyfill.installAll();
 
-  if(!shaka.Player.isBrowserSupported()){
+  if (!shaka.Player.isBrowserSupported()) {
     console.log("Not supported");
     return;
   }
@@ -49,69 +47,57 @@ background:#000;
   const video = document.getElementById("video");
   const container = document.getElementById("player-container");
 
-  const player = new shaka.Player();
-  await player.attach(video);
+  const player = new shaka.Player(video);
 
   const ui = new shaka.ui.Overlay(player, container, video);
 
   ui.configure({
-    addBigPlayButton:true,
-    controlPanelElements:[
+    addBigPlayButton: true,
+    controlPanelElements: [
       "mute","play_pause","time_and_duration",
       "spacer","quality","picture_in_picture","fullscreen"
     ]
   });
 
-  const CONFIG={
-    streamUrl:"https://jiotvmblive.cdn.jio.com//bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd",
-    keyId:"400131994b445d8c8817202248760fda",
-    key:"2d56cb6f07a75b9aff165d534ae2bfc4",
-    cookieUrl:"https://allrounder-live2.pages.dev/api/cookie.json"
+  const CONFIG = {
+    streamUrl: "https://jiotvmblive.cdn.jio.com//bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd",
+    keyId: "400131994b445d8c8817202248760fda",
+    key: "2d56cb6f07a75b9aff165d534ae2bfc4"
   };
 
+  // ✅ YOUR UPDATED COOKIE (DIRECT)
+  const cookieValue = "__hdnea__=st=1775131200~exp=1775152800~acl=/*~hmac=2dae0b4f0f0644367ed24ab627e46c0037f02e5e5dedea781eae13781e453bec";
+
   player.configure({
-    drm:{clearKeys:{[CONFIG.keyId]:CONFIG.key}}
+    drm: { clearKeys: { [CONFIG.keyId]: CONFIG.key } }
   });
 
-  let cookieValue="";
+  // ✅ IMPORTANT NETWORK FILTER
+  player.getNetworkingEngine().registerRequestFilter((type, request) => {
 
-  try{
-    const res = await fetch(CONFIG.cookieUrl,{cache:"no-store"});
-    const data = await res.json();
-    cookieValue = data.cookie || "";
-  }catch(e){
-    console.log("Cookie fetch error");
-  }
+    request.headers["Referer"] = "https://www.jiotv.com/";
+    request.headers["User-Agent"] = "plaYtv/7.1.5";
+    request.headers["Cookie"] = cookieValue;
 
-  if(cookieValue){
-    player.getNetworkingEngine().registerRequestFilter((type,request)=>{
+    let urlCookie = cookieValue.replace("__hdnea__=", "");
 
-      request.headers["Referer"]="https://www.jiotv.com/";
-      request.headers["User-Agent"]="plaYtv/7.1.5";
-      request.headers["Cookie"]=cookieValue;
+    if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
+         type === shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
+         !request.uris[0].includes("__hdnea__")) {
 
-      let urlCookie = cookieValue.startsWith("__hdnea__=")
-        ? cookieValue.substring(10)
-        : cookieValue;
+      const sep = request.uris[0].includes("?") ? "&" : "?";
+      request.uris[0] += sep + "__hdnea__=" + urlCookie;
+    }
+  });
 
-      if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-          type===shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
-          !request.uris[0].includes("__hdnea__")){
-
-        const sep = request.uris[0].includes("?") ? "&" : "?";
-        request.uris[0] += sep + "__hdnea__=" + urlCookie;
-      }
-    });
-  }
-
-  try{
+  try {
     await player.load(CONFIG.streamUrl);
     video.play().catch(()=>{});
-  }catch(e){
-    console.log("Load error", e);
+  } catch (e) {
+    console.log("Load failed", e);
   }
 
-})();
+});
 </script>
 
 </body>
