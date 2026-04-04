@@ -3,13 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Star Sports 1 Hindi HD </title>
+<title>Star Sports // Dillzy </title>
 <meta name="referrer" content="no-referrer">
-
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/>
 
-<style>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-FMP9REY96D');
+</script>
+  <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
 
@@ -41,6 +49,7 @@ font-weight:600;
 color:rgba(255,255,255,0.12);
 }
 
+/* --- Updated Modern Blocker Styles --- */
 .block-overlay{
 position:fixed;
 inset:0;
@@ -85,6 +94,7 @@ color:rgba(255, 255, 255, 0.6);
 line-height:1.6;
 }
 
+/* Icon hidden as requested, but keeping structure if needed later */
 .block-icon{ display: none; }
 .block-note{ display: none; }
 
@@ -96,17 +106,16 @@ line-height:1.6;
 }
 </style>
 </head>
-
 <body>
 
 <div class="shaka-video-container" id="player-container">
 <video id="video" autoplay muted playsinline preload="metadata"></video>
-<div class="custom-watermark"></div>
+<div class="custom-watermark"> </div>
 </div>
 
 <script>
 (function(){
-
+  
   function isSandboxedEnv(){
     try {
       if (window.self === window.top) return false;
@@ -126,11 +135,10 @@ line-height:1.6;
       return true;
     }
   }
-
   function triggerBlockScreen(title, message){
     const container = document.getElementById("player-container");
     const video = document.getElementById("video");
-
+    
     try {
       video.pause();
       video.removeAttribute('src');
@@ -139,6 +147,7 @@ line-height:1.6;
 
     const overlay = document.createElement("div");
     overlay.className = "block-overlay";
+    overlay.id = "sandbox-block-display";
     overlay.innerHTML = `
       <div class="block-box">
         <div class="block-title">${title}</div>
@@ -148,12 +157,11 @@ line-height:1.6;
     document.body.appendChild(overlay);
     container.style.display = 'none';
   }
-
   if(isSandboxedEnv()){
-    triggerBlockScreen('Disable Sandbox', 'Open in Chrome & disable ad blocker');
+
+    triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad blocker');
     return;
   }
-
   const CONFIG={
     streamUrl:"https://jiotvpllive.cdn.jio.com/bpk-tv//Star_Sports_HD1_Hindi_BTS/output/index.mpd",
     keyId:"400131994b445d8c8817202248760fda",
@@ -177,22 +185,22 @@ line-height:1.6;
     const ui=new shaka.ui.Overlay(player,container,video);
 
     ui.configure({
-      addBigPlayButton: true,
-      controlPanelElements: [
-        "mute",
-        "play_pause",
-        "time_and_duration",
-        "spacer",
-        "quality",
-        "picture_in_picture",
-        "fullscreen"
-      ],
-      seekBarColors: {
-        base: "white",
-        buffered: "red",
-        played: "green"
-      }
-    });
+  addBigPlayButton: true,
+  controlPanelElements: [
+    "mute",           // First - volume/mute button
+    "play_pause",     // Second - play/pause button  
+    "time_and_duration", // Third - timeline timings (00:00 / 00:00)
+    "spacer",
+    "quality",
+    "picture_in_picture",
+    "fullscreen"
+  ],
+  seekBarColors: {
+    base: "white",
+    buffered: "red", 
+    played: "green"
+  }
+});
 
     player.configure({
       drm:{clearKeys:{[CONFIG.keyId]:CONFIG.key}},
@@ -216,15 +224,13 @@ line-height:1.6;
     if(cookieValue){
       player.getNetworkingEngine().registerRequestFilter((type,request)=>{
         request.headers["Referer"]="https://www.jiotv.com/";
-        request.headers["User-Agent"]="plaYtv/7.1.5 (Linux;Android 13)";
+        request.headers["User-Agent"]="plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
         request.headers["Cookie"]=cookieValue;
 
-        let urlCookie=cookieValue.startsWith("__hdnea__=")
-          ?cookieValue.substring(10)
-          :cookieValue;
+        let urlCookie=cookieValue.startsWith("__hdnea__=")?cookieValue.substring(10):cookieValue;
 
-        if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-        type===shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
+        if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST||
+        type===shaka.net.NetworkingEngine.RequestType.SEGMENT)&&
         !request.uris[0].includes("__hdnea__")){
           const sep=request.uris[0].includes("?")?"&":"?";
           request.uris[0]+=sep+"__hdnea__="+urlCookie;
@@ -242,9 +248,9 @@ line-height:1.6;
     });
 
   });
-
 })();
 </script>
-
+  <script>(function(s){s.dataset.zone='10603308',s.src='https://bvtpk.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  
 </body>
 </html>
