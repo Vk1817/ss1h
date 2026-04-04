@@ -1,115 +1,52 @@
 <!DOCTYPE html>
-
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Star sports 1 Hindi </title>
+  <meta charset="UTF-8">
+  <title>Hi - Odysee</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
+  <!-- OPTIONAL: remove this too if you don't need analytics -->
+  <!-- Google tag -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-57TPN48YM8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-57TPN48YM8');
+  </script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/>
-
-<style>
-/* KEEPING YOUR ORIGINAL UI SAME */
-body { margin:0; background:#000; font-family:sans-serif; color:#fff; }
-header { position:fixed; top:0; width:100%; height:60px; background:#000; display:flex; align-items:center; justify-content:center; z-index:1000; }
-.video-wrapper { margin-top:60px; width:100%; background:#000; }
-.video-container { width:100%; aspect-ratio:16/9; background:#000; position:relative; }
-
-/* SHAKA PLAYER */
-#video { width:100%; height:100%; object-fit:contain; }
-.shaka-video-container { width:100%; height:100%; }
-
-/* popup + sidebar same */
-</style>
-
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+    iframe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-<h2>CRICKET SUPERFANS LIVE</h2>
-</header>
+<iframe
+  src="https://dash.vodep39240327.workers.dev/?url=https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd?name=Star_Sports_HD1_Hindi&keyId=400131994b445d8c8817202248760fda&key=2d56cb6f07a75b9aff165d534ae2bfc4&cookie=__hdnea__=st=1775299210~exp=1775320810~acl=/*~hmac=df800a88c7a9bbafdcb79f6a1cc631a7c46a1e0acac3746881482f622aa518b5"
 
-<div class="video-wrapper">
-  <div class="video-container shaka-video-container" id="player-container">
-    <video id="video" autoplay playsinline></video>
-  </div>
-</div>
-
-<script>
-(async function(){
-
-const CONFIG = {
-  streamUrl:"https://jiotvpllive.cdn.jio.com/bpk-tv//Star_Sports_HD1_Hindi_BTS/output/index.mpd",
-  keyId:"400131994b445d8c8817202248760fda",
-  key:"2d56cb6f07a75b9aff165d534ae2bfc4",
-  cookieUrl:"https://allrounder-live2.pages.dev/api/cookie.json"
-};
-
-shaka.polyfill.installAll();
-
-if (!shaka.Player.isBrowserSupported()) {
-  alert("Browser not supported");
-  return;
-}
-
-const video = document.getElementById("video");
-const container = document.getElementById("player-container");
-
-const player = new shaka.Player();
-await player.attach(video);
-
-const ui = new shaka.ui.Overlay(player, container, video);
-
-ui.configure({
-  controlPanelElements: [
-    "play_pause",
-    "mute",
-    "time_and_duration",
-    "spacer",
-    "quality",
-    "fullscreen"
-  ]
-});
-
-player.configure({
-  drm:{ clearKeys:{ [CONFIG.keyId]: CONFIG.key }},
-  streaming:{
-    lowLatencyMode:true,
-    bufferingGoal:10,
-    rebufferingGoal:2
-  }
-});
-
-/* COOKIE SYSTEM */
-let cookieValue = "";
-try{
-  const res = await fetch(CONFIG.cookieUrl);
-  const data = await res.json();
-  cookieValue = data.cookie || "";
-}catch(e){}
-
-/* HEADERS */
-if(cookieValue){
-  player.getNetworkingEngine().registerRequestFilter((type, request)=>{
-    request.headers["Referer"]="https://www.jiotv.com/";
-    request.headers["User-Agent"]="Mozilla/5.0";
-    request.headers["Cookie"]=cookieValue;
-  });
-}
-
-/* LOAD STREAM */
-try{
-  await player.load(CONFIG.streamUrl);
-  video.play();
-}catch(e){
-  console.error("Error:", e);
-}
-
-})();
-</script>
+  allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+  allowfullscreen
+  sandbox="
+    allow-scripts 
+    allow-same-origin 
+    allow-forms 
+    allow-presentation
+  ">
+</iframe>
 
 </body>
 </html>
