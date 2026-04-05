@@ -4,9 +4,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Star Sports 1 Hindi HD </title>
+<title>Star Sports hindi </title>
 <meta name="referrer" content="no-referrer">
-
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/>
 
@@ -42,7 +41,6 @@ font-weight:600;
 color:rgba(255,255,255,0.12);
 }
 
-/* Blocker Styles */
 .block-overlay{
 position:fixed;
 inset:0;
@@ -103,7 +101,7 @@ line-height:1.6;
 
 <div class="shaka-video-container" id="player-container">
 <video id="video" autoplay muted playsinline preload="metadata"></video>
-<div class="custom-watermark"></div>
+<div class="custom-watermark"> </div>
 </div>
 
 <script>
@@ -141,6 +139,7 @@ line-height:1.6;
 
     const overlay = document.createElement("div");
     overlay.className = "block-overlay";
+    overlay.id = "sandbox-block-display";
     overlay.innerHTML = `
       <div class="block-box">
         <div class="block-title">${title}</div>
@@ -152,14 +151,14 @@ line-height:1.6;
   }
 
   if(isSandboxedEnv()){
-    triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only');
+    triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad blocker');
     return;
   }
 
   const CONFIG={
-    streamUrl:"https://jiotvioslive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd",
-    keyId:"400131994b445d8c8817202248760fda",
-    key:"2d56cb6f07a75b9aff165d534ae2bfc4",
+    streamUrl:"https://jiotvioslive.cdn.jio.com//bpk-tv/StarSportsHD2Hin_BTS/output/index.mpd",
+    keyId:"bd1ea6a1c1fb5dcdb709434e0826bbc0",
+    key:"f57f22cba32739ce7beb1fab3f3d060b",
     cookieUrl:"https://allrounder-live4.pages.dev/api/cookie.json"
   };
 
@@ -191,7 +190,7 @@ line-height:1.6;
       ],
       seekBarColors: {
         base: "white",
-        buffered: "red",
+        buffered: "red", 
         played: "green"
       }
     });
