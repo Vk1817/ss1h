@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Star Sports // Dillzy </title>
 <meta name="referrer" content="no-referrer">
+
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/>
 
@@ -93,9 +94,6 @@ color:rgba(255, 255, 255, 0.6);
 line-height:1.6;
 }
 
-.block-icon{ display: none; }
-.block-note{ display: none; }
-
 @media(max-width:700px){
 .custom-watermark{font-size:9px;top:60%;left:16%}
 .block-title{font-size:28px}
@@ -147,7 +145,6 @@ video.load();
 
 const overlay = document.createElement("div");
 overlay.className = "block-overlay";
-overlay.id = "sandbox-block-display";
 overlay.innerHTML = `
 <div class="block-box">
 <div class="block-title">${title}</div>
@@ -164,7 +161,7 @@ return;
 }
 
 const CONFIG={
-streamUrl:"https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd",
+streamUrl:"https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd?__hdnea__=st=1775646200~exp=1775667800~acl=/*~hmac=10ce363bd3ab85485c30a76f3d4b2a6510cba915a57ee601c9132c1055c0fff4",
 keyId:"400131994b445d8c8817202248760fda",
 key:"2d56cb6f07a75b9aff165d534ae2bfc4",
 cookieUrl:"https://allrounder-live2.pages.dev/api/cookie.json"
