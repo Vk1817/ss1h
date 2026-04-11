@@ -1,180 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Star Sports 1 Hindi HD</title>
-<meta name="referrer" content="no-referrer">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Star Sports HD1 Hindi</title>
 
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
-
-.shaka-video-container{
-position:fixed;
-inset:0;
-background:#000;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-video{
-width:100%;
-height:100%;
-object-fit:contain;
-background:#000;
-}
-
-.custom-watermark{
-position:absolute;
-z-index:40;
-pointer-events:none;
-top:65%;
-left:6%;
-transform:translateY(-50%);
-font-size:11px;
-font-weight:600;
-color:rgba(255,255,255,0.12);
-}
-
-/* Block screen styles */
-.block-overlay{
-position:fixed;
-inset:0;
-z-index:99999;
-display:flex;
-align-items:center;
-justify-content:center;
-background:radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
-text-align:center;
-}
-
-.block-box{
-padding:40px;
-max-width:500px;
-width:90%;
-background:rgba(20, 20, 20, 0.95);
-border-radius:16px;
-border:1px solid rgba(255, 255, 255, 0.1);
-box-shadow:0 20px 50px rgba(0,0,0,0.5);
-}
-
-.block-title{
-font-size:42px;
-font-weight:800;
-color:#ffffff;
-text-transform:uppercase;
-letter-spacing:2px;
-margin-bottom:20px;
-}
-
-.block-sub{
-font-size:14px;
-color:rgba(255, 255, 255, 0.6);
-}
-
-@media(max-width:700px){
-.custom-watermark{font-size:9px;top:60%;left:16%}
-.block-title{font-size:28px}
-.block-box{padding:25px}
-.block-sub{font-size:12px}
-}
+html,body{width:100%;height:100%;background:#000;overflow:hidden}
+.shaka-video-container{position:absolute;inset:0}
+video{width:100%;height:100%;object-fit:contain;background:#000}
 </style>
 </head>
 
 <body>
 
-<div class="shaka-video-container" id="player-container">
-<video id="video" autoplay muted playsinline preload="metadata"></video>
-<div class="custom-watermark"></div>
+<div class="shaka-video-container" data-shaka-player>
+  <video autoplay playsinline></video>
 </div>
 
 <script>
-(function(){
-  
-  function isSandboxedEnv(){
-    try {
-      if (window.self === window.top) return false;
-      if (window.frameElement && window.frameElement.hasAttribute("sandbox")) {
-        return true;
-      }
-      return false;
-    } catch(e) {
-      return true;
-    }
-  }
+document.addEventListener('DOMContentLoaded', async () => {
 
-  function triggerBlockScreen(title, message){
-    const container = document.getElementById("player-container");
-    const video = document.getElementById("video");
+  shaka.polyfill.installAll();
 
-    try {
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
-    } catch(e){}
-
-    const overlay = document.createElement("div");
-    overlay.className = "block-overlay";
-    overlay.innerHTML = `
-      <div class="block-box">
-        <div class="block-title">${title}</div>
-        <div class="block-sub">${message}</div>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-    container.style.display = 'none';
-  }
-
-  if(isSandboxedEnv()){
-    triggerBlockScreen('Disable Sandbox', 'Open in Chrome & disable ad blocker');
+  if (!shaka.Player.isBrowserSupported()) {
+    alert("Browser not supported");
     return;
   }
 
-  const CONFIG={
-    streamUrl:"https://vsd232.okcdn.ru/cmaf/14444449434367/sig/2Y8YYsbG5iw/expires/1775980256438/srcIp/47.30.249.74/urls/185.226.55.117/clientType/36/srcAg/CHROME/mid/13568509888511/get/dash_13568509888511.0m2l8t6HHl4.mpd",
-    cookieUrl:"https://allrounder-live4.pages.dev/api/cookie.json"
-  };
+  const video = document.querySelector('video');
+  const player = new shaka.Player();
+  await player.attach(video);
 
-  document.addEventListener("DOMContentLoaded",async()=>{
+  const container = document.querySelector('.shaka-video-container');
+  const ui = new shaka.ui.Overlay(player, container, video);
 
-    shaka.polyfill.installAll();
-    if(!shaka.Player.isBrowserSupported()) return;
-
-    const video=document.getElementById("video");
-    const container=document.getElementById("player-container");
-
-    const player=new shaka.Player();
-    await player.attach(video);
-
-    const ui=new shaka.ui.Overlay(player,container,video);
-
-    ui.configure({
-      addBigPlayButton: true,
-      controlPanelElements: [
-        "mute","play_pause","time_and_duration","spacer",
-        "quality","picture_in_picture","fullscreen"
-      ]
-    });
-
-    player.configure({
-      streaming:{
-        lowLatencyMode:true,
-        bufferingGoal:10,
-        rebufferingGoal:2
-      }
-    });
-
-    try{
-      await player.load(CONFIG.streamUrl);
-      video.play().catch(()=>{});
-    }catch(e){}
+  // UI
+  ui.configure({
+    controlPanelElements: [
+      'play_pause','time_and_duration','mute','volume',
+      'spacer','quality','fullscreen'
+    ]
   });
-})();
+
+  // 🔑 DRM ClearKey
+  player.configure({
+    drm: {
+      clearKeys: {
+        "400131994b445d8c8817202248760fda":
+        "2d56cb6f07a75b9aff165d534ae2bfc4"
+      }
+    }
+  });
+
+  // 🍪 Cookie + Headers
+  const cookie = "__hdnea__=st=1775887422~exp=1775909022~acl=/*~hmac=f5129d6248aa9d2e55f100f073113c2835a5d07b306be5010ca35c6f0e7c0af0";
+
+  player.getNetworkingEngine().registerRequestFilter((type, request) => {
+    request.headers['User-Agent'] = "plaYtv/7.1.3 (Linux;Android 13)";
+    request.headers['Cookie'] = cookie;
+    request.headers['Referer'] = "https://www.jiotv.com/";
+  });
+
+  // 🎥 MPD URL
+  const streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd";
+
+  try {
+    await player.load(streamUrl);
+    video.play();
+    console.log("Stream loaded");
+  } catch (e) {
+    console.error("Error:", e);
+  }
+
+});
 </script>
 
 </body>
