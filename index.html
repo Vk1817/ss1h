@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Star Sports 1 Hindi HD </title>
+<title>Star Sports 1 Hindi HD</title>
 <meta name="referrer" content="no-referrer">
 
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
@@ -37,7 +37,6 @@ top:65%;
 left:6%;
 transform:translateY(-50%);
 font-size:11px;
-font-weight:600;
 color:rgba(255,255,255,0.12);
 }
 
@@ -48,45 +47,26 @@ z-index:99999;
 display:flex;
 align-items:center;
 justify-content:center;
-background:radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+background:#000;
 text-align:center;
 }
 
 .block-box{
-padding:40px;
-max-width:500px;
-width:90%;
-background:rgba(20, 20, 20, 0.95);
-border-radius:16px;
-border:1px solid rgba(255, 255, 255, 0.1);
-box-shadow:0 20px 50px rgba(0,0,0,0.5);
-animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes fadeInUp {
-from { opacity: 0; transform: translateY(30px); }
-to { opacity: 1; transform: translateY(0); }
+padding:30px;
+max-width:400px;
+background:#111;
+border-radius:12px;
 }
 
 .block-title{
-font-size:42px;
-font-weight:800;
-color:#ffffff;
-text-transform:uppercase;
-letter-spacing:2px;
-margin-bottom:20px;
+font-size:28px;
+color:#fff;
+margin-bottom:10px;
 }
 
 .block-sub{
 font-size:14px;
-color:rgba(255,255,255,0.6);
-}
-
-@media(max-width:700px){
-.custom-watermark{font-size:9px;top:60%;left:16%}
-.block-title{font-size:28px}
-.block-box{padding:25px}
-.block-sub{font-size:12px}
+color:#aaa;
 }
 </style>
 </head>
@@ -105,10 +85,6 @@ function isSandboxedEnv(){
 try {
 if (window.self === window.top) return false;
 if (window.frameElement && window.frameElement.hasAttribute("sandbox")) return true;
-try {
-document.domain = document.domain;
-if (window.frameElement && !window.frameElement.getAttribute("sandbox")) return false;
-} catch (e) { return true; }
 return false;
 } catch(e) { return true; }
 }
@@ -117,11 +93,7 @@ function triggerBlockScreen(title, message){
 const container = document.getElementById("player-container");
 const video = document.getElementById("video");
 
-try {
 video.pause();
-video.removeAttribute('src');
-video.load();
-} catch(e){}
 
 const overlay = document.createElement("div");
 overlay.className = "block-overlay";
@@ -129,15 +101,14 @@ overlay.innerHTML = `
 <div class="block-box">
 <div class="block-title">${title}</div>
 <div class="block-sub">${message}</div>
-</div>
-`;
+</div>`;
 
 document.body.appendChild(overlay);
 container.style.display = 'none';
 }
 
 if(isSandboxedEnv()){
-triggerBlockScreen('Disable Sandbox', 'Open in Chrome & Disable AdBlock');
+triggerBlockScreen('Disable Sandbox', 'Open in Chrome');
 return;
 }
 
@@ -154,15 +125,12 @@ if(!shaka.Player.isBrowserSupported()) return;
 const video=document.getElementById("video");
 const container=document.getElementById("player-container");
 
-video.muted=true;
-
 const player=new shaka.Player();
 await player.attach(video);
 
 const ui=new shaka.ui.Overlay(player,container,video);
 
 ui.configure({
-addBigPlayButton:true,
 controlPanelElements:[
 "mute","play_pause","time_and_duration","spacer",
 "quality","picture_in_picture","fullscreen"
@@ -170,7 +138,6 @@ controlPanelElements:[
 });
 
 player.configure({
-manifest:{defaultPresentationDelay:5},
 streaming:{
 lowLatencyMode:true,
 bufferingGoal:10,
