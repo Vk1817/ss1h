@@ -1,177 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> ss1h </title>
-    <meta name="referrer" content="no-referrer">
-    
-    <!-- Shaka Player Dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CrickCast Live – IND W vs ENG W</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0e0d;color:#e8f0e9;font-family:'Barlow',sans-serif;min-height:100vh}
+nav{background:#0f1a12;border-bottom:2px solid #1a7a2e;padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Oswald',sans-serif;font-size:1.5rem;font-weight:700;color:#f5c518;letter-spacing:2px}
+.live-pill{background:#e53935;color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:3px;letter-spacing:1px;animation:blink 1.2s infinite;margin-left:10px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.tg-btn{background:#1a7a2e;color:#fff;padding:7px 15px;border-radius:4px;font-size:13px;font-weight:600;text-decoration:none;transition:background .2s}
+.tg-btn:hover{background:#2ea843}
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+.match-banner{background:#111a14;border-bottom:1px solid #1f3024;padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:center;gap:2rem;flex-wrap:wrap}
+.team-name{font-family:'Oswald',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:1px}
+.ind{color:#FF9933}
+.eng{color:#4FC3F7}
+.vs-box{background:#1a7a2e;color:#fff;font-family:'Oswald',sans-serif;font-size:1rem;font-weight:700;padding:5px 14px;border-radius:4px;letter-spacing:2px}
+.match-meta{font-size:12px;color:#7a9980;letter-spacing:1px;text-align:center}
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            background: #000;
-            overflow: hidden;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+.player-wrap{max-width:960px;margin:1.25rem auto;padding:0 1rem}
+.player-frame{background:#000;border-radius:8px;overflow:hidden;border:1px solid #1f3024}
+.player-frame iframe{width:100%;height:520px;border:none;display:block}
+.player-footer{background:#111a14;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #1f3024}
+.pf-left{font-size:13px;color:#7a9980}
+.pf-left span{color:#2ea843;font-weight:600}
+.hd-badge{background:#1a7a2e;color:#a5d6a7;font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px;letter-spacing:1px}
 
-        .shaka-video-container {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+.tg-promo{max-width:960px;margin:0 auto 1.5rem;padding:0 1rem}
+.tg-inner{background:#111a14;border:1px solid #1f3024;border-left:3px solid #1a7a2e;border-radius:8px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.tg-text .t1{font-family:'Oswald',sans-serif;font-size:1.1rem;color:#f5c518;font-weight:700}
+.tg-text .t2{font-size:12px;color:#7a9980;margin-top:3px}
+.tg-join{background:#0088cc;color:#fff;font-weight:700;padding:9px 20px;border-radius:5px;font-size:14px;text-decoration:none;white-space:nowrap;transition:background .2s}
+.tg-join:hover{background:#006fa8}
 
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: #000;
-        }
+footer{text-align:center;padding:1rem;font-size:11px;color:#3d5c44;border-top:1px solid #1f3024}
+footer a{color:#2ea843}
 
-        /* Akcoder Branding Watermark */
-        .akcoder-branding {
-            position: absolute;
-            z-index: 40;
-            pointer-events: none;
-            bottom: 20px;
-            right: 20px;
-            font-size: 14px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 1px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        }
-
-        /* Modern UI Controls Customization */
-        .shaka-range-container {
-            height: 4px !important;
-        }
-
-        .shaka-bottom-controls {
-            padding: 0 10px 10px 10px !important;
-        }
-    </style>
+@media(max-width:600px){.player-frame iframe{height:220px}.team-name{font-size:1.1rem}}
+</style>
 </head>
 <body>
 
-<div class="shaka-video-container" id="player-container" data-shaka-player-container>
-    <video id="video" autoplay playsinline preload="metadata" data-shaka-player></video>
-    <div class="akcoder-branding">Crickcast Live</div>
+<nav>
+  <div style="display:flex;align-items:center">
+    <span class="logo">🏏 CrickCast</span>
+    <span class="live-pill">● LIVE</span>
+  </div>
+  <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="tg-btn">📲 Join Telegram</a>
+</nav>
+
+<div class="match-banner">
+  <div class="team-name ind">🇮🇳 India Women</div>
+  <div class="vs-box">VS</div>
+  <div class="team-name eng">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England Women</div>
+  <div style="width:100%;text-align:center" class="match-meta">🏟 LIVE NOW · Women's International Cricket · CrickCast Live Stream</div>
 </div>
 
-<script>
-    (function() {
-        const CONFIG = {
-            streamUrl: "https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/WDVLive/index.mpd",
-            keyId: "400131994b445d8c8817202248760fda",
-            key: "2d56cb6f07a75b9aff165d534ae2bfc4",
-            cookieUrl: "https://allrounder-live2.pages.dev/api/cookie.json"
-        };
+<div class="player-wrap">
+  <div class="player-frame">
+    <iframe src="https://allrounder-live11.pages.dev/channel/willow" allowfullscreen allow="autoplay; fullscreen; encrypted-media"></iframe>
+  </div>
+  <div class="player-footer">
+    <div class="pf-left">Streaming on <span>CrickCast</span> · Powered by Willow</div>
+    <span class="hd-badge">HD LIVE</span>
+  </div>
+</div>
 
-        async function initApp() {
-            shaka.polyfill.installAll();
+<div class="tg-promo">
+  <div class="tg-inner">
+    <div class="tg-text">
+      <div class="t1">📲 Get Live Links on Telegram — Free!</div>
+      <div class="t2">Stream links, score alerts & match notifications. Join CrickCast now.</div>
+    </div>
+    <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="tg-join">Join Channel →</a>
+  </div>
+</div>
 
-            if (!shaka.Player.isBrowserSupported()) {
-                console.error('Browser not supported');
-                return;
-            }
-
-            const video = document.getElementById('video');
-            const container = document.getElementById('player-container');
-            const player = new shaka.Player(video);
-
-            // Configure UI
-            const ui = new shaka.ui.Overlay(player, container, video);
-            ui.configure({
-                addBigPlayButton: true,
-                controlPanelElements: ["play_pause", "mute", "volume", "time_and_duration", "spacer", "quality", "fullscreen"],
-                seekBarColors: {
-                    base: "rgba(255,255,255,.3)",
-                    buffered: "rgba(255,255,255,.5)",
-                    played: "red"
-                }
-            });
-
-            // Configure DRM and Streaming settings
-            player.configure({
-                drm: {
-                    clearKeys: {
-                        [CONFIG.keyId]: CONFIG.key
-                    }
-                },
-                streaming: {
-                    lowLatencyMode: true,
-                    jumpLargeGaps: true,
-                    rebufferingGoal: 2
-                }
-            });
-
-            // Networking Engine Filter
-            player.getNetworkingEngine().registerRequestFilter(async (type, request) => {
-                // Mandatory Headers for the stream
-                request.headers["Referer"] = "https://www.jiotv.com/";
-                request.headers["User-Agent"] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
-
-                // Fetch cookies if not already available
-                if (!window.cachedCookie) {
-                    try {
-                        const res = await fetch(CONFIG.cookieUrl, { cache: "no-store" });
-                        const data = await res.json();
-                        window.cachedCookie = data.cookie || "";
-                    } catch (e) {
-                        console.error("Cookie fetch failed", e);
-                    }
-                }
-
-                if (window.cachedCookie) {
-                    request.headers["Cookie"] = window.cachedCookie;
-                    
-                    // Token handling for segments
-                    const token = window.cachedCookie.includes("__hdnea__=") 
-                        ? window.cachedCookie.split("__hdnea__=")[1].split(";")[0] 
-                        : window.cachedCookie;
-
-                    if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
-                         type === shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
-                         !request.uris[0].includes("__hdnea__")) {
-                        const sep = request.uris[0].includes("?") ? "&" : "?";
-                        request.uris[0] += sep + "__hdnea__=" + token;
-                    }
-                }
-            });
-
-            player.addEventListener('error', (event) => console.error('Error code', event.detail.code, 'object', event.detail));
-
-            try {
-                await player.load(CONFIG.streamUrl);
-                video.muted = true; // Auto-play usually requires mute
-                await video.play();
-            } catch (e) {
-                console.error('Load failed', e);
-            }
-        }
-
-        // Initialize when libraries are ready
-        if (window.shaka) {
-            initApp();
-        } else {
-            document.addEventListener('shaka-ui-loaded', initApp);
-        }
-    })();
-</script>
+<footer>© 2025 CrickCast · Streams are third-party embeds for entertainment · <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank">Telegram</a></footer>
 
 </body>
 </html>
